@@ -88,16 +88,6 @@ function initializeUI () {
     });
 }
 
-function updateBtn () {
-  if (isSubscribed) {
-    pushButton.textContent = 'Disable Push Messaging';
-  } else {
-    pushButton.textContent = 'Enable Push Messaging';
-  }
-
-  pushButton.disabled = false;
-}
-
 function subscribeUser () {
   const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
 
@@ -114,8 +104,8 @@ function subscribeUser () {
 
       updateBtn();
     })
-    .catch(function (err) {
-      console.log('Failed to subscribe the user: ', err);
+    .catch(function (error) {
+      console.log('Failed to subscribe the user: ', error);
       updateBtn();
     });
 }
@@ -132,4 +122,21 @@ function updateSubscriptionOnServer (subscription) {
   } else {
     subscriptionDetails.classList.add('is-invisible');
   }
+}
+
+function updateBtn () {
+  if (Notification.permission === 'denied') {
+    pushButton.textContent = 'Push Messaging Blocked.';
+    pushButton.disabled = true;
+    updateSubscriptionOnServer(null);
+    return;
+  }
+
+  if (isSubscribed) {
+    pushButton.textContent = 'Disable Push Messaging';
+  } else {
+    pushButton.textContent = 'Enable Push Messaging';
+  }
+
+  pushButton.disabled = false;
 }
